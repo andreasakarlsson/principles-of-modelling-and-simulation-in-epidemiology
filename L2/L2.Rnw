@@ -1,0 +1,37 @@
+\documentclass{article}
+
+% !Rnw weave = knitr
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\Sexpr{Sys.time()}
+
+%% Sweave/knitr options
+\SweaveOpts{fig.align=center, dev=pdf, tidy=TRUE, keep.source=TRUE, echo=TRUE}
+<<echo=FALSE>>=
+## stuff for making pretty PDFs -- **ignore** if running
+##  interactively ...
+if (require(knitr)) {
+  knit_hooks$set(fig=function(before, options, envir) {
+    if (before) {
+      par(bty="l",las=1)
+    } else { }
+  })}
+olddev <- options(device = function(...) {
+          .Call("R_GD_nullDevice", PACKAGE = "grDevices")
+        })
+@
+
+<<setup, cache=FALSE>>=
+read_chunk('/home/andkar/workspace/MEB/Modeling_in_Epidemilogy/L2/L2.R')
+@
+
+
+<<echo=TRUE, figs.only=TRUE>>=
+plot(1:10,1:10)
+@
+
+
+
+\end{document}

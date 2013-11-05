@@ -1,0 +1,26 @@
+\documentclass{article}
+
+% !Rnw weave = knitr
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(concordance=TRUE)
+@
+
+
+
+<<setup,cache=FALSE>>=
+library(knitr)
+read_chunk('/home/andkar/workspace/MEB/Modeling_in_Epidemilogy/L2/L2.R')
+@
+
+
+<<Q2a, fig.width=7, fig.height=3, out.width='.9\\\\linewidth'>>=
+@
+
+
+
+\end{document}
