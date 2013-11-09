@@ -1,37 +1,86 @@
 \documentclass{article}
-
 % !Rnw weave = knitr
-
+\usepackage[top=0.7in, bottom=0.7in, left=0.7in, right=0.5in]{geometry}
+\usepackage[parfill]{parskip}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
-\Sexpr{Sys.time()}
 
-%% Sweave/knitr options
-\SweaveOpts{fig.align=center, dev=pdf, tidy=TRUE, keep.source=TRUE, echo=TRUE}
-<<echo=FALSE>>=
-## stuff for making pretty PDFs -- **ignore** if running
-##  interactively ...
-if (require(knitr)) {
-  knit_hooks$set(fig=function(before, options, envir) {
-    if (before) {
-      par(bty="l",las=1)
-    } else { }
-  })}
-olddev <- options(device = function(...) {
-          .Call("R_GD_nullDevice", PACKAGE = "grDevices")
-        })
-@
-
-<<setup, cache=FALSE>>=
-read_chunk('/home/andkar/workspace/MEB/Modeling_in_Epidemilogy/L2/L2.R')
+% Need to have cash=false here
+<<setup, cache=FALSE, message=FALSE, echo=FALSE>>=
+library('knitr')
+read_chunk('L2.R')
+opts_chunk$set(cache=TRUE, out.width='.5\\linewidth', fig.width=7, fig.height=4, dev="pdf")
 @
 
 
-<<echo=TRUE, figs.only=TRUE>>=
-plot(1:10,1:10)
+\title{Principles of Modelling and Simulation in Epidemiology}
+% \subtitle{Laboratory exercise 2}
+\author{Andreas Karlsson}
+\maketitle
+
+
+\bf{Required R-packages}
+<<Requirements, message=FALSE, out.width='.9\\linewidth'>>=
 @
 
+\bf{2.1 RNGs}
+<< RNG, echo=-(1:3),results='hide'>>=
+@
 
+\pagebreak
+\bf{2.2 Binomial RNG and binomial from uniform RNG}
+<< bin, echo=-(1:3),results='hide'>>=
+@
+
+\pagebreak
+\bf{2.3 RNG and time-steps}
+<< time_step, echo=-(1:3), results='hide'>>=
+@
+\pagebreak
+\bf{2.4 Seeds - making a stochastic simulation reproducible}
+<< seeds, echo=-(1:3), results='hide'>>=
+@
+
+\bf{3.1 Demographic Stochasticity}
+<< demographic, echo=-(1:3), results='hide'>>=
+@
+
+\bf{3.2 Environmental Stochasticity}
+<< environmental, echo=-(1:3), results='hide'>>=
+@
+
+\bf{3.3 Initial Value Stochasticity}
+<< initial, echo=-(1:3), results='hide'>>=
+@
+
+\bf{4.1 Output within replication}
+<< within, echo=-(1:3), results='hide'>>=
+@
+
+Within replication summary:
+<< within_txt, comment=NA>>=
+@
+
+\bf{4.2 Output over many replications}
+<< many, echo=-(1:3), results='hide', out.width='.8\\linewidth', dpi=150, dev="png">>=
+@
+
+Mean and CI for the last sample:
+<< many_txt1, comment=NA>>=
+@
+Percentiles for the last sample:
+<< many_txt2, comment=NA>>=
+@
+Max of the last sample \& max of the highest value within repetitions:
+<< many_txt3, comment=NA>>=
+@
+
+\bf{5 Comparing Logistic \& SI models}
+<< Log_SI, echo=-(1:3), results='hide', warning=FALSE, out.width='.8\\linewidth', dpi=150, dev="png">>=
+@
+
+Summarising the effects of changing dt:
+<< Log_SI_txt, comment=NA>>=
+@
 
 \end{document}
