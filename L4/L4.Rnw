@@ -1,0 +1,83 @@
+\documentclass{article}
+% !Rnw weave = knitr
+\usepackage[top=0.7in, bottom=0.7in, left=0.7in, right=0.5in]{geometry}
+\usepackage[parfill]{parskip}
+
+\begin{document}
+
+% Need to have cash=false here
+<<setup, cache=FALSE, message=FALSE, echo=FALSE>>=
+library('knitr')
+read_chunk('L4.R')
+opts_chunk$set(cache=TRUE, out.width='.9\\linewidth', fig.width=9, fig.height=4, dev="pdf")
+@
+
+
+\title{Principles of Modelling and Simulation in Epidemiology}
+\author{Andreas Karlsson}
+\maketitle
+
+{\Large Laboratory exercise 4}
+
+\textbf{Required R-packages}
+<<Requirements, message=FALSE, out.width='.9\\linewidth'>>=
+@
+
+\textbf{8 Input Data}
+<< Defining_input_data >>=
+@
+
+\pagebreak
+
+\textbf{6 Realisation of the Model}
+<< constructing_the_model >>=
+@
+
+\textbf{10.2 Results when using the initial values}
+<< initial_value_results >>=
+@
+
+\pagebreak
+
+\textbf{10.3 Best fit of P, T1, T2, a, b, c \& y}
+<< optimised_results >>=
+@
+
+\pagebreak
+
+\textbf{10.3 Repeating previous with a lookup table}\\
+Got a small difference since the triangle got a flat top
+<< rep_opt_res_with_lookup_table >>=
+@
+
+\textbf{10.3 Optimising trianlge table and P, T1 \& T2 with Nelder-Mead (Simplex)}
+<< opt_res_with_opt_triangle_Nelder_Mead >>=
+@
+
+\textbf{10.3 Optimising trianlge table and P, T1 \& T2 with BFGS (Quasi-Newton)}
+<< opt_res_with_opt_triangle_BFGS>>=
+@
+
+\pagebreak
+
+\textbf{12 Optimisation of screening}
+<< opt_of_screening >>=
+@
+
+\pagebreak
+
+\textbf{12 Task 1. Comparing results wheen not screening in age-interval}
+<< noscreening >>=
+@
+
+\textbf{12 Task 2. Comparing results wheen one screening in age-interval}
+<< onescreening >>=
+@
+
+\pagebreak
+
+\textbf{12 Task 3. Comparing results of optimised screening ages}
+<< optimised_screening_ages, warning=FALSE >>=
+@
+
+\end{document}
