@@ -19,7 +19,7 @@ require(stats) #The stats package has the 'optim'-function
 rm(list=ls(all=TRUE))
 
 ## Setting the relative tolerance for the optimisations
-reltol <- 1e-4
+reltol <- 1e-3
 
 CA_STAT_0_amp = c(0, 0, 0, 0, 1, 4.5, 14, 32, 53, 54, 48, 43, 36.5, 29, 26.5, 24, 22, 18)
 CA_STAT_0 <- approxfun(seq(0,85,by=5),CA_STAT_0_amp, rule = 1)
@@ -120,15 +120,14 @@ parameters_lookup <- c(opt_res$par[c('P', 'T1', 'T2')], Y_tri = triang(triang_ti
 res_triang <- callCervModels(parameters_lookup, NewInsituLookUpTable = TRUE, make_plots = TRUE)
 
 ## @knitr opt_res_with_opt_triangle_Nelder_Mead
-opt_tri_res_Simplex <- optim(parameters_lookup,  callCervModels, method = c("Nelder-Mead"), control=list( reltol), NewInsituLookUpTable = TRUE) 
+opt_tri_res_Simplex <- optim(parameters_lookup,  callCervModels, method = c("Nelder-Mead"), control=list( reltol ), NewInsituLookUpTable = TRUE) 
 tmp <- callCervModels(parameters = opt_tri_res_Simplex$par, NewInsituLookUpTable = TRUE, make_plots = TRUE)
 print(opt_tri_res_Simplex$par)
 
 ## @knitr opt_res_with_opt_triangle_BFGS
-opt_tri_res_BFGS <- optim(parameters_lookup,  callCervModels, method = c("BFGS"), control=list(reltol), NewInsituLookUpTable = TRUE) 
+opt_tri_res_BFGS <- optim(parameters_lookup,  callCervModels, method = c("BFGS"),  control=list( reltol ), NewInsituLookUpTable = TRUE) 
 tmp <- callCervModels(parameters = opt_tri_res_BFGS$par, NewInsituLookUpTable = TRUE, make_plots = TRUE)
 print(opt_tri_res_BFGS$par)
-
 
 ## @knitr opt_of_screening
 AppliedCervScreen <- function(time, state, parameters) {
@@ -136,7 +135,7 @@ AppliedCervScreen <- function(time, state, parameters) {
     D <- T1 / (3 * P^(1/3) )
     R <- T1 / (3 * (1 - P^(1/3) ))
     SITU <- SITU1 + SITU2 + SITU3
-    dSITU1 <- New_insitu(time) - SITU1 / R - SITU1 / D
+    dSITU1 <- New_insitu_N(time) - SITU1 / R - SITU1 / D
     dSITU2 <- SITU1 / D - SITU2 / R - SITU2 / D
     dSITU3 <- SITU2 / D - SITU3 / R - SITU3 / D
     dInvasive <-  SITU3 / D - Invasive / T2
@@ -145,11 +144,13 @@ AppliedCervScreen <- function(time, state, parameters) {
     return(list(c(dSITU1, dSITU2, dSITU3, dInvasive, dSUMCANCER), Ca_diag_both = Ca_diag_both, SITU = SITU))
   })
 }
-callAppliedCervModels <- function(ages, opt_parameters, make_plots = FALSE){
-  New_insitu <<- approxfun(seq(0, 85, by = 2.5), opt_parameters[grep("Y_tri", names(opt_parameters))], rule = 2)
+callAppliedCervModels <- function(ages, N, opt_parameters, make_plots = FALSE){
+  New_insitu <- approxfun(seq(0, 85, by = 2.5), opt_parameters[grep("Y_tri", names(opt_parameters))], rule = 2)
   dt <- 1
   times <- seq(0, 85, by = dt)
-  
+  factor <- N / sum(New_insitu(times))/dt
+  New_insitu_N <<- approxfun(seq(0, 85, by = 2.5), factor * opt_parameters[grep("Y_tri", names(opt_parameters))], rule = 2)
+    
   eventdat <- data.frame(var = c("SITU1", "SITU2", "SITU3","Invasive"),
                        time = c(rep(ages['Age1'],4), rep(ages['Age2'],4), rep(ages['Age3'],4)) ,
                        value = rep(0.25,12),
@@ -159,32 +160,36 @@ callAppliedCervModels <- function(ages, opt_parameters, make_plots = FALSE){
   init <- c(SITU1 = 0, SITU2 = 0, SITU3 = 0, Invasive = 0, SUMCANCER = 0)
   out_appl_nscr <- as.data.frame(ode(y = init, times = times, func = AppliedCervScreen, parms = opt_parameters))
   out_appl_scr <- as.data.frame(ode(y = init, times = times, func = AppliedCervScreen, parms = opt_parameters, events = list(data = eventdat)))  
+  
+  CumNoScreen <- max(out_appl_nscr['SUMCANCER'], na.rm=T)
+  CumScreen <- max(out_appl_scr['SUMCANCER'], na.rm=T)
+  REDUCTION <- CumNoScreen - CumScreen
   if (make_plots){
     layout(matrix(1:2, 1, 2, byrow = TRUE))
     matplot(times, cbind(out_appl_nscr$SITU, out_appl_scr$SITU), type = "l", xlab = "Time", ylab = "Ratios", main = "SITU_0 vs SITU_1", lwd = 1, lty = 1, bty = "l", col = 2:4)
     legend('topright', c('SITU_0', 'SITU_1'), lty = 1, col = 2:3)
     matplot(times, cbind(out_appl_nscr['SUMCANCER'],out_appl_scr['SUMCANCER']), type = "l", xlab = "Time", ylab = "Subjects", main = "Cumulated Cancers", lwd = 1, lty = 1, bty = "l", col = 2:3)
     legend('topleft', c('SUMCANCER_0', 'SUMCANCER_1'), lty = 1, col = 2:3)
+    print(data.frame(Cumulated_no_Screening = CumNoScreen, Cumulated_Screening = CumScreen, Reduction = REDUCTION))
   }
-  
-  REDUCTION <- max(out_appl_nscr['SUMCANCER'], na.rm=T) - max(out_appl_scr['SUMCANCER'], na.rm=T)
   return(REDUCTION)
 }
 # Choosing the optimised parameters from previously
 opt_parameters <- opt_tri_res_BFGS$par
+N <- 100000
 
 ## @knitr noscreening
 ages <- c(Age1 = 0, Age2 = 0, Age3 = 0)
-tmp <- callAppliedCervModels(ages =ages, opt_parameters, make_plots=TRUE)
+tmp <- callAppliedCervModels(ages =ages, N = N, opt_parameters, make_plots=TRUE)
 
 ## @knitr onescreening
 ages <- c(Age1 = 40, Age2 = 0, Age3 = 0)
-tmp <- callAppliedCervModels(ages =ages, opt_parameters, make_plots=TRUE)
+tmp <- callAppliedCervModels(ages =ages, N = N, opt_parameters, make_plots=TRUE)
 
 ## @knitr optimised_screening_ages
 lower = 0
 upper = 85
 ages <- c(Age1 = 35, Age2 = 45, Age3 = 55)
-opt_ages_L_BFGS_B <- optim(ages,  callAppliedCervModels, method = c("L-BFGS-B"), lower = lower, upper = upper, control=list(reltol, fnscale = -1), opt_parameters = opt_parameters) 
-tmp <- callAppliedCervModels(ages = round(opt_ages_L_BFGS_B$par), opt_parameters, make_plots = TRUE)
+opt_ages_L_BFGS_B <- optim(ages, N = N, callAppliedCervModels, method = c("L-BFGS-B"), lower = lower, upper = upper, control=list(reltol, fnscale = -1), opt_parameters = opt_parameters) 
+tmp <- callAppliedCervModels(ages = round(opt_ages_L_BFGS_B$par), N = N, opt_parameters, make_plots = TRUE)
 print(opt_ages_L_BFGS_B$par)

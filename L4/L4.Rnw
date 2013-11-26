@@ -46,7 +46,7 @@ opts_chunk$set(cache=TRUE, out.width='.9\\linewidth', fig.width=9, fig.height=4,
 \pagebreak
 
 \textbf{10.3 Repeating previous with a lookup table}\\
-Got a small difference since the triangle got a flat top
+Got a small difference since the triangle got a different top
 << rep_opt_res_with_lookup_table >>=
 @
 
@@ -66,11 +66,11 @@ Got a small difference since the triangle got a flat top
 
 \pagebreak
 
-\textbf{12 Task 1. Comparing results wheen not screening in age-interval}
+\textbf{12 Task 1. Comparing results with no screening within the age-interval}
 << noscreening >>=
 @
 
-\textbf{12 Task 2. Comparing results wheen one screening in age-interval}
+\textbf{12 Task 2. Comparing results with one screening within the age-interval}
 << onescreening >>=
 @
 
