@@ -1,0 +1,11 @@
+#+TITLE: Principles of Modelling and Simulation in Epidemiology
+
+These are my suggested solutions to the course *Principles of
+Modelling and Simulation in Epidemiology*. The course was given in
+another software the R-solutions are not the official solutions to the
+course.
+
+- Lab 1 :: [[L1/L1.pdf]]
+- Lab 2 :: [[L2/L2.html]]
+- Lab 3 :: [[L3/L3.html]]
+- Lab 4 :: [[L4/L4.pdf]]
