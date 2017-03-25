@@ -2,10 +2,13 @@
 
 These are my suggested solutions to the course *Principles of
 Modelling and Simulation in Epidemiology*. The course was given in
-another software the R-solutions are not the official solutions to the
-course.
+another software, and these R-solutions are not the official solutions.
 
-- Lab 1 :: [[L1/L1.pdf]]
-- Lab 2 :: [[L2/L2.html]]
-- Lab 3 :: [[L3/L3.html]]
-- Lab 4 :: [[L4/L4.pdf]]
++ Lab 1 ::
+  + [[https://andreasakarlsson.github.io/principles-of-modelling-and-simulation-in-epidemiology/L1/L1.pdf][L1]]
++ Lab 2 ::
+  + [[https://andreasakarlsson.github.io/principles-of-modelling-and-simulation-in-epidemiology/L2/L2.html][L2]]
++ Lab 3 ::
+  + [[https://andreasakarlsson.github.io/principles-of-modelling-and-simulation-in-epidemiology/L3/L3.html][L3]]
++ Lab 4 ::
+  + [[https://andreasakarlsson.github.io/principles-of-modelling-and-simulation-in-epidemiology/L4/L4.pdf][L4]]
